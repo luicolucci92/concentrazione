@@ -106,7 +106,7 @@ h2 {
 }
 
 .display-wrap {
-  margin: 26px 0 24px;
+  margin: 26px 0 14px;
   padding: clamp(22px, 7vw, 36px) 14px;
   border-radius: 16px;
   background: #20231f;
@@ -136,7 +136,7 @@ h2 {
 
 .quick-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 9px;
 }
 
@@ -262,7 +262,7 @@ button:focus-visible {
   display: grid;
   grid-template-columns: 1.35fr 1fr 1fr;
   gap: 10px;
-  margin-top: 24px;
+  margin: 0 0 24px;
 }
 
 .primary-btn {
@@ -273,6 +273,21 @@ button:focus-visible {
 .secondary-btn {
   background: #343932;
   color: white;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  transform: none;
+}
+
+button:disabled:active {
+  transform: none;
+}
+
+input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .primary-btn:active,

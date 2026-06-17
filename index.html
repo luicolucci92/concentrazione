@@ -19,8 +19,14 @@
       </div>
 
       <div class="display-wrap" aria-live="polite">
-        <div class="time-display" id="timeDisplay">25:00</div>
-        <div class="sub-display" id="subDisplay">Scegli un intervallo e premi Start</div>
+        <div class="time-display" id="timeDisplay">02:00</div>
+        <div class="sub-display" id="subDisplay">Scegli un intervallo e premi Inizia</div>
+      </div>
+
+      <div class="controls" aria-label="Controlli timer">
+        <button class="primary-btn" id="startBtn" type="button">Inizia</button>
+        <button class="secondary-btn" id="pauseBtn" type="button" disabled>Stop</button>
+        <button class="secondary-btn" id="resetBtn" type="button" disabled>Reset</button>
       </div>
 
       <section class="section-block" aria-labelledby="quick-title">
@@ -32,10 +38,6 @@
           <button class="quick-btn" type="button" data-minutes="5">5</button>
           <button class="quick-btn" type="button" data-minutes="10">10</button>
           <button class="quick-btn" type="button" data-minutes="15">15</button>
-          <button class="quick-btn" type="button" data-minutes="20">20</button>
-          <button class="quick-btn" type="button" data-minutes="30">30</button>
-          <button class="quick-btn" type="button" data-minutes="45">45</button>
-          <button class="quick-btn" type="button" data-minutes="60">60</button>
         </div>
       </section>
 
@@ -44,7 +46,7 @@
         <div class="manual-grid">
           <label>
             <span>Minuti</span>
-            <input id="minutesInput" type="number" inputmode="numeric" min="0" max="999" step="1" value="25">
+            <input id="minutesInput" type="number" inputmode="numeric" min="0" max="999" step="1" value="2">
           </label>
           <label>
             <span>Secondi</span>
@@ -73,12 +75,6 @@
           <p id="notifyStatus">Per vedere un avviso fuori dalla pagina, abilita le notifiche.</p>
         </div>
       </section>
-
-      <div class="controls" aria-label="Controlli timer">
-        <button class="primary-btn" id="startBtn" type="button">Start</button>
-        <button class="secondary-btn" id="pauseBtn" type="button">Pausa</button>
-        <button class="secondary-btn" id="resetBtn" type="button">Reset</button>
-      </div>
     </section>
   </main>
 

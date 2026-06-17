@@ -2,7 +2,8 @@
   "use strict";
 
   const STORAGE_KEY = "focusTimerSettings";
-  const DEFAULT_DURATION = 25 * 60;
+  const TIMER_STATE_KEY = "focusTimerRuntime";
+  const DEFAULT_DURATION = 2 * 60;
 
   const els = {
     timeDisplay: document.getElementById("timeDisplay"),
@@ -95,10 +96,26 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   }
 
+  function saveTimerState(extraState) {
+    const state = Object.assign({
+      duration: selectedDuration,
+      endTime,
+      isRunning,
+      isAlarmOpen,
+      remaining: Math.max(0, Math.ceil(getRemainingFromClock())),
+      updatedAt: Date.now()
+    }, extraState || {});
+    localStorage.setItem(TIMER_STATE_KEY, JSON.stringify(state));
+  }
+
+  function clearTimerState() {
+    localStorage.removeItem(TIMER_STATE_KEY);
+  }
+
   function loadSettings() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      selectedDuration = Number.isFinite(saved.duration) && saved.duration > 0 ? saved.duration : DEFAULT_DURATION;
+      selectedDuration = DEFAULT_DURATION;
       if (saved.sound && soundPatterns[saved.sound]) {
         els.soundSelect.value = saved.sound;
       }
@@ -112,6 +129,69 @@
     setManualInputs(selectedDuration);
     updateVolumeLabel();
     updateNotificationStatus();
+  }
+
+  function updateControlState() {
+    els.startBtn.disabled = isRunning || isAlarmOpen;
+    els.pauseBtn.disabled = !isRunning;
+    els.resetBtn.disabled = !isRunning && !isAlarmOpen;
+    els.quickButtons.forEach((button) => {
+      button.disabled = isRunning || isAlarmOpen;
+    });
+    els.minutesInput.disabled = isRunning || isAlarmOpen;
+    els.secondsInput.disabled = isRunning || isAlarmOpen;
+  }
+
+  function restoreTimerState() {
+    let state = null;
+    try {
+      state = JSON.parse(localStorage.getItem(TIMER_STATE_KEY) || "null");
+    } catch (error) {
+      state = null;
+    }
+
+    if (!state || !Number.isFinite(state.duration) || state.duration <= 0) {
+      return false;
+    }
+
+    selectedDuration = Math.round(state.duration);
+    setManualInputs(selectedDuration);
+
+    if (state.isRunning && Number.isFinite(state.endTime)) {
+      const remaining = Math.max(0, (state.endTime - Date.now()) / 1000);
+      endTime = state.endTime;
+      remainingWhenPaused = Math.max(1, Math.ceil(remaining));
+
+      if (remaining > 0) {
+        isRunning = true;
+        stopTicker();
+        tickInterval = window.setInterval(tick, 250);
+        scheduleDeadlineCheck();
+        updateDisplay(remaining);
+        els.subDisplay.textContent = `Ripreso: ${formatTime(remaining)}`;
+        setStatus("Attivo");
+        saveTimerState();
+        updateControlState();
+        return true;
+      }
+
+      completeTimer();
+      return true;
+    }
+
+    if (state.isAlarmOpen) {
+      remainingWhenPaused = selectedDuration;
+      updateDisplay(0);
+      els.subDisplay.textContent = "Tempo scaduto";
+      setStatus("Scaduto");
+      showAlarm();
+      saveTimerState({ isRunning: false, endTime: null, remaining: 0, isAlarmOpen: true });
+      updateControlState();
+      return true;
+    }
+
+    clearTimerState();
+    return false;
   }
 
   function updateQuickSelection() {
@@ -133,10 +213,15 @@
   function syncDurationFromInputs() {
     selectedDuration = getManualDuration();
     remainingWhenPaused = selectedDuration;
+    isRunning = false;
+    endTime = null;
+    stopTicker();
     saveSettings();
+    clearTimerState();
     updateDisplay(remainingWhenPaused);
     els.subDisplay.textContent = `Intervallo impostato: ${formatTime(selectedDuration)}`;
     setStatus("Pronto");
+    updateControlState();
   }
 
   function getRemainingFromClock() {
@@ -296,6 +381,8 @@
       navigator.vibrate([250, 120, 250, 120, 450]);
     }
     startAlarmSound();
+    saveTimerState({ isRunning: false, endTime: null, remaining: 0, isAlarmOpen: true });
+    updateControlState();
   }
 
   function hideAlarm() {
@@ -303,22 +390,31 @@
     els.alarmOverlay.hidden = true;
     document.title = "Timer concentrazione";
     stopAlarmSound();
+    saveTimerState({ isAlarmOpen: false });
+    updateControlState();
   }
 
-  function startTimer(durationSeconds) {
+  function startTimer(durationSeconds, preserveInterval) {
+    if (isRunning || isAlarmOpen) return;
     ensureAudio();
     requestNotificationAccess();
-    selectedDuration = Math.max(1, Math.round(durationSeconds || getManualDuration()));
-    remainingWhenPaused = selectedDuration;
-    endTime = Date.now() + selectedDuration * 1000;
+    const countdownDuration = Math.max(1, Math.round(durationSeconds || getManualDuration()));
+    if (!preserveInterval) {
+      selectedDuration = countdownDuration;
+      setManualInputs(selectedDuration);
+    }
+    remainingWhenPaused = countdownDuration;
+    endTime = Date.now() + countdownDuration * 1000;
     isRunning = true;
     stopTicker();
     tickInterval = window.setInterval(tick, 250);
     scheduleDeadlineCheck();
     saveSettings();
-    updateDisplay(selectedDuration);
-    els.subDisplay.textContent = `In corso: ${formatTime(selectedDuration)}`;
+    saveTimerState();
+    updateDisplay(countdownDuration);
+    els.subDisplay.textContent = `In corso: ${formatTime(countdownDuration)}`;
     setStatus("Attivo");
+    updateControlState();
     tick();
   }
 
@@ -328,9 +424,11 @@
     isRunning = false;
     endTime = null;
     stopTicker();
+    clearTimerState();
     updateDisplay(remainingWhenPaused);
-    els.subDisplay.textContent = `In pausa: ${formatTime(remainingWhenPaused)}`;
-    setStatus("Pausa");
+    els.subDisplay.textContent = `Fermato: ${formatTime(remainingWhenPaused)}`;
+    setStatus("Stop");
+    updateControlState();
   }
 
   function resetTimer() {
@@ -339,9 +437,11 @@
     endTime = null;
     remainingWhenPaused = selectedDuration;
     stopTicker();
+    clearTimerState();
     updateDisplay(selectedDuration);
     els.subDisplay.textContent = "Timer reimpostato";
     setStatus("Pronto");
+    updateControlState();
   }
 
   function completeTimer() {
@@ -349,12 +449,14 @@
     endTime = null;
     remainingWhenPaused = selectedDuration;
     stopTicker();
+    saveTimerState({ isRunning: false, endTime: null, remaining: 0, isAlarmOpen: true });
     updateDisplay(0);
     els.subDisplay.textContent = "Tempo scaduto";
     setStatus("Scaduto");
     if (!isAlarmOpen) {
       showAlarm();
     }
+    updateControlState();
   }
 
   els.quickGrid.addEventListener("click", (event) => {
@@ -362,11 +464,16 @@
     if (!button) return;
     selectedDuration = Number(button.dataset.minutes) * 60;
     remainingWhenPaused = selectedDuration;
+    isRunning = false;
+    endTime = null;
+    stopTicker();
     setManualInputs(selectedDuration);
     saveSettings();
+    clearTimerState();
     updateDisplay(selectedDuration);
     els.subDisplay.textContent = `Intervallo impostato: ${button.dataset.minutes} min`;
     setStatus("Pronto");
+    updateControlState();
   });
 
   [els.minutesInput, els.secondsInput].forEach((input) => {
@@ -390,7 +497,10 @@
   els.notifyBtn.addEventListener("click", () => requestNotificationAccess(true));
 
   els.startBtn.addEventListener("click", () => {
-    startTimer(getManualDuration());
+    const durationToStart = remainingWhenPaused > 0 && remainingWhenPaused < selectedDuration
+      ? remainingWhenPaused
+      : getManualDuration();
+    startTimer(durationToStart, durationToStart < selectedDuration);
   });
 
   els.pauseBtn.addEventListener("click", pauseTimer);
@@ -409,6 +519,7 @@
 
   document.addEventListener("visibilitychange", () => {
     if (isRunning) {
+      saveTimerState();
       tick();
       scheduleDeadlineCheck();
     }
@@ -416,6 +527,7 @@
 
   window.addEventListener("focus", () => {
     if (isRunning) {
+      saveTimerState();
       tick();
       scheduleDeadlineCheck();
     }
@@ -423,11 +535,16 @@
 
   window.addEventListener("pageshow", () => {
     if (isRunning) {
+      saveTimerState();
       tick();
       scheduleDeadlineCheck();
     }
   });
 
   loadSettings();
-  updateDisplay(selectedDuration);
+  if (!restoreTimerState()) {
+    updateDisplay(selectedDuration);
+    clearTimerState();
+    updateControlState();
+  }
 })();
