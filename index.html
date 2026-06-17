@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ef">
+  <title>Timer concentrazione</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" aria-labelledby="app-title">
+    <section class="timer-panel">
+      <div class="topbar">
+        <div>
+          <p class="eyebrow">Focus timer</p>
+          <h1 id="app-title">Concentrazione</h1>
+        </div>
+        <div class="status-pill" id="statusText" aria-live="polite">Pronto</div>
+      </div>
+
+      <div class="display-wrap" aria-live="polite">
+        <div class="time-display" id="timeDisplay">25:00</div>
+        <div class="sub-display" id="subDisplay">Scegli un intervallo e premi Start</div>
+      </div>
+
+      <section class="section-block" aria-labelledby="quick-title">
+        <h2 id="quick-title">Minuti rapidi</h2>
+        <div class="quick-grid" id="quickGrid">
+          <button class="quick-btn" type="button" data-minutes="1">1</button>
+          <button class="quick-btn" type="button" data-minutes="2">2</button>
+          <button class="quick-btn" type="button" data-minutes="3">3</button>
+          <button class="quick-btn" type="button" data-minutes="5">5</button>
+          <button class="quick-btn" type="button" data-minutes="10">10</button>
+          <button class="quick-btn" type="button" data-minutes="15">15</button>
+          <button class="quick-btn" type="button" data-minutes="20">20</button>
+          <button class="quick-btn" type="button" data-minutes="30">30</button>
+          <button class="quick-btn" type="button" data-minutes="45">45</button>
+          <button class="quick-btn" type="button" data-minutes="60">60</button>
+        </div>
+      </section>
+
+      <section class="section-block" aria-labelledby="manual-title">
+        <h2 id="manual-title">Imposta manualmente</h2>
+        <div class="manual-grid">
+          <label>
+            <span>Minuti</span>
+            <input id="minutesInput" type="number" inputmode="numeric" min="0" max="999" step="1" value="25">
+          </label>
+          <label>
+            <span>Secondi</span>
+            <input id="secondsInput" type="number" inputmode="numeric" min="0" max="59" step="1" value="0">
+          </label>
+        </div>
+      </section>
+
+      <section class="section-block" aria-labelledby="sound-title">
+        <h2 id="sound-title">Suono allarme</h2>
+        <div class="sound-row">
+          <select id="soundSelect" aria-label="Scegli suono allarme">
+            <option value="bell">Campana dolce</option>
+            <option value="chime">Chime chiaro</option>
+            <option value="pulse">Impulso</option>
+            <option value="beep">Beep classico</option>
+          </select>
+          <button class="ghost-btn" id="testSoundBtn" type="button">Prova</button>
+        </div>
+        <label class="volume-control">
+          <span>Volume allarme <strong id="volumeValue">100%</strong></span>
+          <input id="volumeSlider" type="range" min="20" max="100" step="5" value="100">
+        </label>
+        <div class="notify-row">
+          <button class="notify-btn" id="notifyBtn" type="button">Abilita avvisi in background</button>
+          <p id="notifyStatus">Per vedere un avviso fuori dalla pagina, abilita le notifiche.</p>
+        </div>
+      </section>
+
+      <div class="controls" aria-label="Controlli timer">
+        <button class="primary-btn" id="startBtn" type="button">Start</button>
+        <button class="secondary-btn" id="pauseBtn" type="button">Pausa</button>
+        <button class="secondary-btn" id="resetBtn" type="button">Reset</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="alarm-overlay" id="alarmOverlay" role="dialog" aria-modal="true" aria-labelledby="alarmTitle" hidden>
+    <div class="alarm-screen">
+      <p class="eyebrow">Tempo scaduto</p>
+      <h2 id="alarmTitle">Pausa completata</h2>
+      <p id="alarmText">Premi OK per ripartire con lo stesso intervallo.</p>
+      <button class="ok-btn" id="okBtn" type="button">OK</button>
+      <button class="finish-btn" id="finishBtn" type="button">Finito</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

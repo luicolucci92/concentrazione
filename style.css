@@ -1,0 +1,378 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f5ef;
+  --panel: #fffdf7;
+  --ink: #20231f;
+  --muted: #686e63;
+  --line: #dedbcf;
+  --accent: #237a68;
+  --accent-dark: #145c50;
+  --accent-soft: #dff0e9;
+  --warn: #b84732;
+  --shadow: 0 18px 55px rgba(36, 39, 35, 0.12);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(35, 122, 104, 0.12), transparent 34rem),
+    linear-gradient(135deg, #f6f5ef 0%, #eef2ec 100%);
+  color: var(--ink);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.timer-panel {
+  width: min(100%, 560px);
+  background: rgba(255, 253, 247, 0.94);
+  border: 1px solid rgba(222, 219, 207, 0.9);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: clamp(18px, 4vw, 30px);
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 8vw, 3.35rem);
+}
+
+h2 {
+  font-size: 1rem;
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  min-width: 88px;
+  min-height: 36px;
+  display: inline-grid;
+  place-items: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.display-wrap {
+  margin: 26px 0 24px;
+  padding: clamp(22px, 7vw, 36px) 14px;
+  border-radius: 16px;
+  background: #20231f;
+  color: #fffdf7;
+  text-align: center;
+}
+
+.time-display {
+  font-size: clamp(4rem, 22vw, 7.3rem);
+  font-weight: 850;
+  line-height: 0.95;
+  font-variant-numeric: tabular-nums;
+}
+
+.sub-display {
+  min-height: 24px;
+  margin-top: 12px;
+  color: rgba(255, 253, 247, 0.74);
+  font-size: clamp(0.95rem, 3.2vw, 1.08rem);
+}
+
+.section-block {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.quick-btn,
+.secondary-btn,
+.primary-btn,
+.ghost-btn {
+  min-height: 52px;
+  border-radius: 12px;
+  font-weight: 820;
+}
+
+.quick-btn {
+  background: #eeebe0;
+  color: var(--ink);
+  border: 2px solid transparent;
+}
+
+.quick-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+.manual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  outline: 0;
+}
+
+input {
+  padding: 8px 12px;
+  font-size: 1.35rem;
+  font-weight: 820;
+  text-align: center;
+}
+
+input[type="range"] {
+  min-height: 36px;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+select {
+  padding: 0 14px;
+  font-weight: 760;
+}
+
+input:focus,
+select:focus,
+button:focus-visible {
+  outline: 3px solid rgba(35, 122, 104, 0.25);
+  outline-offset: 2px;
+}
+
+.sound-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.volume-control {
+  margin-top: 2px;
+}
+
+.volume-control span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notify-row {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f8f6ee;
+}
+
+.notify-row p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.ghost-btn {
+  min-width: 92px;
+  background: #eeebe0;
+  color: var(--ink);
+}
+
+.notify-btn {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+  background: #20231f;
+  color: #fffdf7;
+  font-weight: 840;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: white;
+}
+
+.secondary-btn {
+  background: #343932;
+  color: white;
+}
+
+.primary-btn:active,
+.secondary-btn:active,
+.quick-btn:active,
+.ghost-btn:active,
+.ok-btn:active,
+.finish-btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.alarm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(16, 18, 16, 0.88);
+}
+
+.alarm-overlay[hidden] {
+  display: none;
+}
+
+.alarm-screen {
+  width: min(100%, 520px);
+  min-height: min(82svh, 620px);
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  padding: clamp(22px, 6vw, 34px);
+  border-radius: 20px;
+  background: #fffdf7;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.alarm-screen h2 {
+  font-size: clamp(2rem, 10vw, 3.8rem);
+}
+
+.alarm-screen p:not(.eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.ok-btn {
+  width: 100%;
+  min-height: 40svh;
+  border-radius: 18px;
+  background: var(--accent);
+  color: #fff;
+  font-size: clamp(3.5rem, 24vw, 7.5rem);
+  font-weight: 900;
+}
+
+.finish-btn {
+  justify-self: center;
+  min-width: 122px;
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #f0d8d2;
+  color: var(--warn);
+  font-size: 0.92rem;
+  font-weight: 850;
+}
+
+@media (max-width: 440px) {
+  .app {
+    align-items: stretch;
+    padding: 10px;
+  }
+
+  .timer-panel {
+    width: 100%;
+    min-width: 0;
+    min-height: calc(100svh - 20px);
+    border-radius: 16px;
+  }
+
+  .topbar {
+    align-items: center;
+  }
+
+  .quick-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .manual-grid,
+  .controls,
+  .sound-row {
+    grid-template-columns: 1fr;
+  }
+
+  .primary-btn,
+  .secondary-btn,
+  .ghost-btn {
+    min-height: 56px;
+  }
+}
